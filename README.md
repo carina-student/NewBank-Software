@@ -79,8 +79,8 @@ pytest banco/tests/ -v
 
 - [x] **init**(saldo_inicial=0) — Criar conta com saldo inicial
 - [x] depositar(valor) — Adicionar dinheiro à conta
-- [ ] sacar(valor) — Remover dinheiro da conta
-- [ ] getSaldo() — Retornar saldo atual
+- [x] sacar(valor) — Remover dinheiro da conta
+- [x] getSaldo() — Retornar saldo atual
 - [ ] getNumeroConta() — Retornar número da conta
 
 ### Classe Transferencia (4 métodos)

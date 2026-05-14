@@ -35,3 +35,7 @@ class ContaBancaria:
         if valor > self.saldo:
             raise SaldoInsuficienteException("Saldo insuficiente para este saque")
         self.saldo -= valor
+
+    def getSaldo(self):
+        """Retorna o saldo atual da conta"""
+        return self.saldo
