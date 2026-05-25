@@ -6,7 +6,7 @@ class Extrato:
     def __init__(self):
         self.transacoes = []
 
-    def adicionar_transacao(self, transacao: Transacao):
+    def adicionar_transacao(self, transacao):
 
         if not isinstance(transacao.valor, (int, float)):
             raise ValueError("O valor da transação deve ser numérico")
