@@ -23,6 +23,18 @@ def test_depositar_zero_deve_lancar_excecao():
     with pytest.raises(ValueError):
         conta.depositar(0)
 
+
+def test_depositar_valor_nao_numerico_deve_lancar_excecao():
+    conta = ContaBancaria(saldo_inicial=100)
+    with pytest.raises(ValueError):
+        conta.depositar(None)
+
+
+def test_criar_conta_com_saldo_negativo_deve_lancar_excecao():
+    with pytest.raises(ValueError):
+        ContaBancaria(saldo_inicial=-100)
+
+
 def test_sacar_valor_positivo_com_saldo_suficiente():
     """Deve diminuir o saldo quando sacar valor positivo com saldo suficiente"""
     conta = ContaBancaria(saldo_inicial=100)

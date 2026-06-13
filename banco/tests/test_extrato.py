@@ -73,6 +73,18 @@ def test_adicionar_transacao_com_valor_zerado_deve_lancar_excecao():
         extrato.adicionar_transacao(transacao=transacaoComValorNegativo)
 
 
+def test_adicionar_transacao_com_categoria_invalida_deve_lancar_excecao():
+    extrato = Extrato()
+    transacao = Transacao(
+        valor=100,
+        categoria="invalida",
+        data_operacao=datetime.now(),
+    )
+
+    with pytest.raises(ValueError):
+        extrato.adicionar_transacao(transacao)
+
+
 def test_get_transacao_deve_retornar_transacoes_atuais():
     extrato = Extrato()
 
@@ -226,7 +238,7 @@ def test_calcular_total_saidas_em_extrato_com_saidas():
 
 def test_calcular_total_saidas_em_extrato_vazio():
     extrato = Extrato()
-    assert extrato.calcularTotalEntradas() == 0
+    assert extrato.calcularTotalSaidas() == 0
 
 
 def test_calcular_total_saidas_em_extrato_com_entradas_e_saidas():
