@@ -22,16 +22,26 @@ O projeto tem como foco a aplicação prática de conceitos de **TDD (Test Drive
 
 ```text
 banco/
-├── conta.py          # Código de produção
+├── app.py              # Aplicação Flask (API + UI)
+├── conta.py            # Classe ContaBancaria
+├── extrato.py          # Classe Extrato e Transacao
+├── transferencia.py    # Classe Transferencia
+├── juros.py            # Classe CalculadoraJuros
+├── templates/
+│   └── index.html      # Interface web
 └── tests/
     ├── __init__.py
-    └── test_conta.py # Testes automatizados
+    ├── test_conta.py
+    ├── test_extrato.py
+    ├── test_transferencia.py
+    ├── test_juros.py
+    └── test_app.py
 ```
 
 ## Pré-requisitos
 
 - Python 3.8+
-- pytest
+- pip
 
 ## Instalação
 
@@ -40,7 +50,15 @@ banco/
 ```bash
 python -m venv .venv
 source .venv/Scripts/activate
-pip install pytest
+pip install -r requirements.txt
+```
+
+### Windows (PowerShell)
+
+```powershell
+python -m venv .venv
+.venv\Scripts\Activate.ps1
+pip install -r requirements.txt
 ```
 
 ### Linux / macOS
@@ -48,19 +66,38 @@ pip install pytest
 ```bash
 python3 -m venv .venv
 source .venv/bin/activate
-pip install pytest
+pip install -r requirements.txt
 ```
+
+## Como rodar a aplicação
+
+Com o ambiente virtual ativado, inicie o servidor Flask:
+
+```bash
+python -m banco.app
+```
+
+Acesse a interface web em: **http://127.0.0.1:5000**
+
+### Endpoints disponíveis
+
+| Método | Rota | Descrição |
+|--------|------|-----------|
+| GET | `/` | Interface web |
+| POST | `/api/conta` | Criar conta |
+| GET | `/api/conta/<numero>` | Consultar saldo |
+| POST | `/api/conta/<numero>/depositar` | Depositar |
+| POST | `/api/conta/<numero>/sacar` | Sacar |
+| POST | `/api/transferencia` | Transferir entre contas |
+| GET | `/api/extrato/<numero>` | Consultar extrato |
+| POST | `/api/extrato/<numero>/transacao` | Adicionar transação |
+| POST | `/api/juros/simples` | Calcular juros simples |
+| POST | `/api/juros/compostos` | Calcular juros compostos |
 
 ## Como rodar os testes
 
 ```bash
 python -m pytest banco/tests/ -v
-```
-
-Após ativar o ambiente virtual, também é possível executar:
-
-```bash
-pytest banco/tests/ -v
 ```
 
 ## O ciclo Red-Green-Refactor

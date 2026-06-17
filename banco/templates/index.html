@@ -1,0 +1,842 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Banco · Sistema</title>
+    <style>
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      :root {
+        --bg: #0f1117;
+        --surface: #1a1d27;
+        --border: #2a2d3a;
+        --accent: #6c63ff;
+        --accent-d: #5549e0;
+        --success: #22c55e;
+        --danger: #ef4444;
+        --warn: #f59e0b;
+        --text: #e2e4f0;
+        --muted: #6b7280;
+        --radius: 12px;
+        --mono: "SF Mono", "Fira Code", monospace;
+      }
+
+      body {
+        background: var(--bg);
+        color: var(--text);
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        min-height: 100vh;
+        display: grid;
+        grid-template-rows: auto 1fr;
+      }
+
+      /* ── Header ──────────────────────────────── */
+      header {
+        padding: 1.25rem 2rem;
+        border-bottom: 1px solid var(--border);
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+      }
+      .logo {
+        width: 32px;
+        height: 32px;
+        background: var(--accent);
+        border-radius: 8px;
+        display: grid;
+        place-items: center;
+        font-size: 1rem;
+      }
+      header h1 {
+        font-size: 1rem;
+        font-weight: 600;
+        letter-spacing: -0.3px;
+      }
+      header span {
+        font-size: 0.8rem;
+        color: var(--muted);
+        margin-left: auto;
+      }
+
+      /* ── Layout ──────────────────────────────── */
+      .layout {
+        display: grid;
+        grid-template-columns: 220px 1fr;
+        height: calc(100vh - 65px);
+      }
+
+      /* ── Sidebar ─────────────────────────────── */
+      nav {
+        border-right: 1px solid var(--border);
+        padding: 1.5rem 1rem;
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
+      }
+      .nav-section {
+        font-size: 0.65rem;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--muted);
+        padding: 0.75rem 0.5rem 0.25rem;
+      }
+      .nav-item {
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+        padding: 0.55rem 0.75rem;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 0.875rem;
+        color: var(--muted);
+        transition:
+          background 0.15s,
+          color 0.15s;
+        border: none;
+        background: none;
+        width: 100%;
+        text-align: left;
+      }
+      .nav-item:hover {
+        background: var(--surface);
+        color: var(--text);
+      }
+      .nav-item.active {
+        background: var(--accent);
+        color: #fff;
+      }
+      .nav-icon {
+        font-size: 1rem;
+        width: 1.2rem;
+        text-align: center;
+      }
+
+      /* ── Main ────────────────────────────────── */
+      main {
+        overflow-y: auto;
+        padding: 2rem;
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+      }
+
+      .page {
+        display: none;
+        flex-direction: column;
+        gap: 1.25rem;
+      }
+      .page.active {
+        display: flex;
+      }
+
+      h2 {
+        font-size: 1.25rem;
+        font-weight: 600;
+        letter-spacing: -0.4px;
+      }
+      .subtitle {
+        font-size: 0.85rem;
+        color: var(--muted);
+      }
+
+      /* ── Cards ───────────────────────────────── */
+      .card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 1.5rem;
+      }
+      .card-title {
+        font-size: 0.8rem;
+        font-weight: 600;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        color: var(--muted);
+        margin-bottom: 1rem;
+      }
+      .grid-2 {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+      }
+
+      /* ── Forms ───────────────────────────────── */
+      .field {
+        display: flex;
+        flex-direction: column;
+        gap: 0.4rem;
+      }
+      label {
+        font-size: 0.8rem;
+        color: var(--muted);
+      }
+      input,
+      select {
+        background: var(--bg);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        color: var(--text);
+        padding: 0.6rem 0.85rem;
+        font-size: 0.9rem;
+        outline: none;
+        transition: border-color 0.15s;
+      }
+      input:focus,
+      select:focus {
+        border-color: var(--accent);
+      }
+      select option {
+        background: var(--surface);
+      }
+
+      /* ── Buttons ─────────────────────────────── */
+      .btn {
+        padding: 0.6rem 1.25rem;
+        border-radius: 8px;
+        border: none;
+        cursor: pointer;
+        font-size: 0.875rem;
+        font-weight: 500;
+        transition:
+          opacity 0.15s,
+          transform 0.1s;
+      }
+      .btn:active {
+        transform: scale(0.97);
+      }
+      .btn-primary {
+        background: var(--accent);
+        color: #fff;
+      }
+      .btn-primary:hover {
+        background: var(--accent-d);
+      }
+      .btn-ghost {
+        background: transparent;
+        border: 1px solid var(--border);
+        color: var(--text);
+      }
+      .btn-ghost:hover {
+        background: var(--surface);
+      }
+      .btn-row {
+        display: flex;
+        gap: 0.75rem;
+        margin-top: 0.5rem;
+      }
+
+      /* ── Result ──────────────────────────────── */
+      .result {
+        border-radius: 8px;
+        padding: 0.9rem 1.1rem;
+        font-size: 0.875rem;
+        font-family: var(--mono);
+        display: none;
+        word-break: break-all;
+      }
+      .result.ok {
+        background: #052e16;
+        border: 1px solid #166534;
+        color: var(--success);
+      }
+      .result.err {
+        background: #450a0a;
+        border: 1px solid #991b1b;
+        color: var(--danger);
+      }
+      .result.show {
+        display: block;
+      }
+
+      /* ── Saldo badge ─────────────────────────── */
+      .saldo-badge {
+        font-size: 2rem;
+        font-weight: 700;
+        font-family: var(--mono);
+        color: var(--success);
+        letter-spacing: -1px;
+      }
+
+      /* ── Tabela de extrato ───────────────────── */
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.85rem;
+      }
+      th {
+        text-align: left;
+        padding: 0.5rem 0.75rem;
+        color: var(--muted);
+        font-weight: 500;
+        border-bottom: 1px solid var(--border);
+      }
+      td {
+        padding: 0.6rem 0.75rem;
+        border-bottom: 1px solid var(--border);
+      }
+      tr:last-child td {
+        border-bottom: none;
+      }
+      .tag {
+        display: inline-block;
+        padding: 0.15rem 0.5rem;
+        border-radius: 4px;
+        font-size: 0.75rem;
+        font-weight: 600;
+      }
+      .tag-dep {
+        background: #052e16;
+        color: var(--success);
+      }
+      .tag-saq {
+        background: #450a0a;
+        color: var(--danger);
+      }
+
+      /* ── Totais ──────────────────────────────── */
+      .totais {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 1rem;
+        margin-top: 0.5rem;
+      }
+      .total-item {
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
+      }
+      .total-label {
+        font-size: 0.75rem;
+        color: var(--muted);
+      }
+      .total-value {
+        font-size: 1.25rem;
+        font-weight: 700;
+        font-family: var(--mono);
+      }
+      .green {
+        color: var(--success);
+      }
+      .red {
+        color: var(--danger);
+      }
+      .blue {
+        color: var(--accent);
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div class="logo">🏦</div>
+      <h1>Banco NewBank - Sistema TDD</h1>
+      <span>v1.0 · in-memory</span>
+    </header>
+
+    <div class="layout">
+      <!-- ── Sidebar ─────────────────────────────────── -->
+      <nav>
+        <div class="nav-section">Conta</div>
+        <button class="nav-item active" onclick="show('criar-conta', this)">
+          <span class="nav-icon">＋</span> Nova Conta
+        </button>
+        <button class="nav-item" onclick="show('depositar', this)">
+          <span class="nav-icon">↓</span> Depositar
+        </button>
+        <button class="nav-item" onclick="show('sacar', this)">
+          <span class="nav-icon">↑</span> Sacar
+        </button>
+        <button class="nav-item" onclick="show('saldo', this)">
+          <span class="nav-icon">◎</span> Consultar Saldo
+        </button>
+
+        <div class="nav-section">Operações</div>
+        <button class="nav-item" onclick="show('transferencia', this)">
+          <span class="nav-icon">⇄</span> Transferência
+        </button>
+        <button class="nav-item" onclick="show('extrato', this)">
+          <span class="nav-icon">≡</span> Extrato
+        </button>
+
+        <div class="nav-section">Cálculos</div>
+        <button class="nav-item" onclick="show('juros', this)">
+          <span class="nav-icon">%</span> Calculadora Juros
+        </button>
+      </nav>
+
+      <!-- ── Main ────────────────────────────────────── -->
+      <main>
+        <!-- Criar Conta -->
+        <div class="page active" id="page-criar-conta">
+          <h2>Nova Conta</h2>
+          <p class="subtitle">Crie uma conta bancária com saldo inicial</p>
+          <div class="card">
+            <div class="card-title">Dados da conta</div>
+            <div class="grid-2">
+              <div class="field">
+                <label>Número da conta</label>
+                <input id="cc-numero" placeholder="ex: 001" />
+              </div>
+              <div class="field">
+                <label>Saldo inicial (R$)</label>
+                <input id="cc-saldo" type="number" placeholder="0.00" />
+              </div>
+            </div>
+            <div class="btn-row">
+              <button class="btn btn-primary" onclick="criarConta()">
+                Criar conta
+              </button>
+              <button class="btn btn-ghost" onclick="limpar('cc')">
+                Limpar
+              </button>
+            </div>
+            <div class="result" id="cc-result"></div>
+          </div>
+        </div>
+
+        <!-- Depositar -->
+        <div class="page" id="page-depositar">
+          <h2>Depositar</h2>
+          <p class="subtitle">Adiciona valor ao saldo da conta</p>
+          <div class="card">
+            <div class="card-title">Dados do depósito</div>
+            <div class="grid-2">
+              <div class="field">
+                <label>Número da conta</label>
+                <input id="dep-numero" placeholder="ex: 001" />
+              </div>
+              <div class="field">
+                <label>Valor (R$)</label>
+                <input id="dep-valor" type="number" placeholder="0.00" />
+              </div>
+            </div>
+            <div class="btn-row">
+              <button class="btn btn-primary" onclick="depositar()">
+                Depositar
+              </button>
+              <button class="btn btn-ghost" onclick="limpar('dep')">
+                Limpar
+              </button>
+            </div>
+            <div class="result" id="dep-result"></div>
+          </div>
+        </div>
+
+        <!-- Sacar -->
+        <div class="page" id="page-sacar">
+          <h2>Sacar</h2>
+          <p class="subtitle">Remove valor do saldo da conta</p>
+          <div class="card">
+            <div class="card-title">Dados do saque</div>
+            <div class="grid-2">
+              <div class="field">
+                <label>Número da conta</label>
+                <input id="sac-numero" placeholder="ex: 001" />
+              </div>
+              <div class="field">
+                <label>Valor (R$)</label>
+                <input id="sac-valor" type="number" placeholder="0.00" />
+              </div>
+            </div>
+            <div class="btn-row">
+              <button class="btn btn-primary" onclick="sacar()">Sacar</button>
+              <button class="btn btn-ghost" onclick="limpar('sac')">
+                Limpar
+              </button>
+            </div>
+            <div class="result" id="sac-result"></div>
+          </div>
+        </div>
+
+        <!-- Saldo -->
+        <div class="page" id="page-saldo">
+          <h2>Consultar Saldo</h2>
+          <p class="subtitle">Veja o saldo atual de uma conta</p>
+          <div class="card">
+            <div class="card-title">Identificação</div>
+            <div class="field" style="max-width: 240px">
+              <label>Número da conta</label>
+              <input id="sal-numero" placeholder="ex: 001" />
+            </div>
+            <div class="btn-row">
+              <button class="btn btn-primary" onclick="consultarSaldo()">
+                Consultar
+              </button>
+            </div>
+            <div id="sal-badge" style="margin-top: 1rem; display: none">
+              <div class="total-label">Saldo atual</div>
+              <div class="saldo-badge" id="sal-valor">—</div>
+            </div>
+            <div class="result" id="sal-result"></div>
+          </div>
+        </div>
+
+        <!-- Transferência -->
+        <div class="page" id="page-transferencia">
+          <h2>Transferência</h2>
+          <p class="subtitle">Movimenta saldo entre duas contas</p>
+          <div class="card">
+            <div class="card-title">Dados da transferência</div>
+            <div class="grid-2">
+              <div class="field">
+                <label>Conta origem</label>
+                <input id="tr-origem" placeholder="ex: 001" />
+              </div>
+              <div class="field">
+                <label>Conta destino</label>
+                <input id="tr-destino" placeholder="ex: 002" />
+              </div>
+              <div class="field">
+                <label>Valor (R$)</label>
+                <input id="tr-valor" type="number" placeholder="0.00" />
+              </div>
+            </div>
+            <div class="btn-row">
+              <button class="btn btn-primary" onclick="transferir()">
+                Transferir
+              </button>
+              <button class="btn btn-ghost" onclick="limpar('tr')">
+                Limpar
+              </button>
+            </div>
+            <div class="result" id="tr-result"></div>
+          </div>
+        </div>
+
+        <!-- Extrato -->
+        <div class="page" id="page-extrato">
+          <h2>Extrato</h2>
+          <p class="subtitle">
+            Consulte o histórico de transações de uma conta
+          </p>
+
+          <!-- Card 1: Consultar extrato -->
+          <div class="card">
+            <div class="card-title">Consultar extrato</div>
+            <div class="field" style="max-width: 240px">
+              <label>Número da conta</label>
+              <input id="ext-numero" placeholder="ex: 001" />
+            </div>
+            <div class="btn-row">
+              <button class="btn btn-primary" onclick="carregarExtrato()">
+                Consultar extrato
+              </button>
+              <button class="btn btn-ghost" onclick="limparExtrato()">
+                Limpar
+              </button>
+            </div>
+            <div class="result" id="ext-result"></div>
+          </div>
+
+          <!-- Tabela de transações (exibida após consulta) -->
+          <div class="card" id="ext-tabela-card" style="display: none">
+            <div class="card-title">Transações</div>
+            <table>
+              <thead>
+                <tr>
+                  <th>Data</th>
+                  <th>Responsável</th>
+                  <th>Categoria</th>
+                  <th>Valor</th>
+                </tr>
+              </thead>
+              <tbody id="ext-tbody"></tbody>
+            </table>
+            <div
+              class="totais"
+              style="
+                margin-top: 1.25rem;
+                padding-top: 1rem;
+                border-top: 1px solid var(--border);
+              "
+            >
+              <div class="total-item">
+                <span class="total-label">Total entradas</span>
+                <span class="total-value green" id="ext-entradas">—</span>
+              </div>
+              <div class="total-item">
+                <span class="total-label">Total saídas</span>
+                <span class="total-value red" id="ext-saidas">—</span>
+              </div>
+              <div class="total-item">
+                <span class="total-label">Saldo extrato</span>
+                <span class="total-value blue" id="ext-liquido">—</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Juros -->
+        <div class="page" id="page-juros">
+          <h2>Calculadora de Juros</h2>
+          <p class="subtitle">Simule juros simples e compostos</p>
+          <div class="card">
+            <div class="card-title">Parâmetros</div>
+            <div class="grid-2">
+              <div class="field">
+                <label>Capital (R$)</label>
+                <input id="jur-capital" type="number" placeholder="1000.00" />
+              </div>
+              <div class="field">
+                <label>Taxa (ex: 0.10 = 10%)</label>
+                <input
+                  id="jur-taxa"
+                  type="number"
+                  step="0.01"
+                  placeholder="0.10"
+                />
+              </div>
+              <div class="field">
+                <label>Tempo (períodos)</label>
+                <input id="jur-tempo" type="number" placeholder="12" />
+              </div>
+            </div>
+            <div class="btn-row">
+              <button
+                class="btn btn-primary"
+                onclick="calcularJuros('simples')"
+              >
+                Juros simples
+              </button>
+              <button
+                class="btn btn-ghost"
+                onclick="calcularJuros('compostos')"
+              >
+                Juros compostos
+              </button>
+            </div>
+            <div class="result" id="jur-result"></div>
+          </div>
+          <div id="jur-cards" style="display: none" class="grid-2">
+            <div class="card">
+              <div class="card-title">Juros simples</div>
+              <div class="saldo-badge" id="jur-simples-val">—</div>
+              <div class="total-label" style="margin-top: 0.5rem">
+                Montante final
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-title">Juros compostos</div>
+              <div class="saldo-badge" id="jur-compostos-val">—</div>
+              <div class="total-label" style="margin-top: 0.5rem">
+                Montante final
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <script>
+      const fmt = (v) =>
+        `R$ ${Number(v).toLocaleString("pt-BR", { minimumFractionDigits: 2 })}`;
+      const esc = (v) =>
+        String(v).replace(
+          /[&<>"']/g,
+          (c) =>
+            ({
+              "&": "&amp;",
+              "<": "&lt;",
+              ">": "&gt;",
+              '"': "&quot;",
+              "'": "&#039;",
+            })[c],
+        );
+
+      function show(id, trigger) {
+        document
+          .querySelectorAll(".page")
+          .forEach((p) => p.classList.remove("active"));
+        document
+          .querySelectorAll(".nav-item")
+          .forEach((n) => n.classList.remove("active"));
+        document.getElementById("page-" + id).classList.add("active");
+        trigger.classList.add("active");
+      }
+
+      function setResult(id, data, ok) {
+        const el = document.getElementById(id + "-result");
+        el.textContent = JSON.stringify(data, null, 2);
+        el.className = "result show " + (ok ? "ok" : "err");
+      }
+
+      function limpar(prefix) {
+        document.querySelectorAll(`[id^="${prefix}-"]`).forEach((el) => {
+          if (el.tagName === "INPUT") el.value = "";
+          if (el.classList.contains("result")) {
+            el.className = "result";
+            el.textContent = "";
+          }
+        });
+      }
+
+      async function api(method, path, body) {
+        const opts = {
+          method,
+          headers: { "Content-Type": "application/json" },
+        };
+        if (body) opts.body = JSON.stringify(body);
+        const res = await fetch(path, opts);
+        return { ok: res.ok, data: await res.json() };
+      }
+
+      async function criarConta() {
+        const numero = document.getElementById("cc-numero").value.trim();
+        const saldo_inicial = parseFloat(
+          document.getElementById("cc-saldo").value || 0,
+        );
+        const { ok, data } = await api("POST", "/api/conta", {
+          numero,
+          saldo_inicial,
+        });
+        setResult(
+          "cc",
+          ok ? { numero: data.numero, saldo: fmt(data.saldo) } : data,
+          ok,
+        );
+      }
+
+      async function depositar() {
+        const numero = document.getElementById("dep-numero").value.trim();
+        const valor = parseFloat(document.getElementById("dep-valor").value);
+        const { ok, data } = await api(
+          "POST",
+          `/api/conta/${numero}/depositar`,
+          { valor },
+        );
+        setResult(
+          "dep",
+          ok ? { numero: data.numero, novo_saldo: fmt(data.saldo) } : data,
+          ok,
+        );
+      }
+
+      async function sacar() {
+        const numero = document.getElementById("sac-numero").value.trim();
+        const valor = parseFloat(document.getElementById("sac-valor").value);
+        const { ok, data } = await api("POST", `/api/conta/${numero}/sacar`, {
+          valor,
+        });
+        setResult(
+          "sac",
+          ok ? { numero: data.numero, novo_saldo: fmt(data.saldo) } : data,
+          ok,
+        );
+      }
+
+      async function consultarSaldo() {
+        const numero = document.getElementById("sal-numero").value.trim();
+        const { ok, data } = await api("GET", `/api/conta/${numero}`);
+        const badge = document.getElementById("sal-badge");
+        if (ok) {
+          document.getElementById("sal-valor").textContent = fmt(data.saldo);
+          badge.style.display = "block";
+          document.getElementById("sal-result").className = "result";
+        } else {
+          badge.style.display = "none";
+          setResult("sal", data, false);
+        }
+      }
+
+      async function transferir() {
+        const conta_origem = document.getElementById("tr-origem").value.trim();
+        const conta_destino = document
+          .getElementById("tr-destino")
+          .value.trim();
+        const valor = parseFloat(document.getElementById("tr-valor").value);
+        const { ok, data } = await api("POST", "/api/transferencia", {
+          conta_origem,
+          conta_destino,
+          valor,
+        });
+        setResult(
+          "tr",
+          ok
+            ? {
+                origem: `${data.conta_origem.numero} → ${fmt(data.conta_origem.saldo)}`,
+                destino: `${data.conta_destino.numero} → ${fmt(data.conta_destino.saldo)}`,
+              }
+            : data,
+          ok,
+        );
+      }
+
+      async function carregarExtrato() {
+        const numero = document.getElementById("ext-numero").value.trim();
+        if (!numero) {
+          setResult("ext", { erro: "Informe o número da conta" }, false);
+          return;
+        }
+        const { ok, data } = await api("GET", `/api/extrato/${numero}`);
+        if (!ok) {
+          setResult("ext", data, false);
+          return;
+        }
+
+        const tbody = document.getElementById("ext-tbody");
+        tbody.innerHTML =
+          data.transacoes.length === 0
+            ? '<tr><td colspan="4" style="color:var(--muted);text-align:center;padding:1rem">Nenhuma transação registrada</td></tr>'
+            : data.transacoes
+                .map(
+                  (t) => `
+      <tr>
+        <td style="color:var(--muted);font-size:.8rem">${esc(t.data || "—")}</td>
+        <td>${esc(t.responsavel || "—")}</td>
+        <td><span class="tag ${t.categoria === "deposito" ? "tag-dep" : "tag-saq"}">${t.categoria === "deposito" ? "Depósito" : "Saque"}</span></td>
+        <td>${fmt(t.valor)}</td>
+      </tr>`,
+                )
+                .join("");
+
+        const liquido = data.total_entradas - data.total_saidas;
+        document.getElementById("ext-entradas").textContent = fmt(
+          data.total_entradas,
+        );
+        document.getElementById("ext-saidas").textContent = fmt(
+          data.total_saidas,
+        );
+        document.getElementById("ext-liquido").textContent = fmt(liquido);
+        document.getElementById("ext-tabela-card").style.display = "block";
+        document.getElementById("ext-result").className = "result";
+      }
+
+      function limparExtrato() {
+        document.getElementById("ext-numero").value = "";
+        document.getElementById("ext-result").className = "result";
+        document.getElementById("ext-result").textContent = "";
+        document.getElementById("ext-tabela-card").style.display = "none";
+        document.getElementById("ext-tbody").innerHTML = "";
+      }
+
+      async function calcularJuros(tipo) {
+        const capital = parseFloat(
+          document.getElementById("jur-capital").value,
+        );
+        const taxa = parseFloat(document.getElementById("jur-taxa").value);
+        const tempo = parseFloat(document.getElementById("jur-tempo").value);
+        const { ok, data } = await api("POST", `/api/juros/${tipo}`, {
+          capital,
+          taxa,
+          tempo,
+        });
+        if (!ok) {
+          setResult("jur", data, false);
+          return;
+        }
+        document.getElementById("jur-result").className = "result";
+        document.getElementById("jur-cards").style.display = "grid";
+        document.getElementById(`jur-${tipo}-val`).textContent = fmt(
+          data.montante,
+        );
+      }
+    </script>
+  </body>
+</html>

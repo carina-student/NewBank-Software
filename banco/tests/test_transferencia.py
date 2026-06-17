@@ -62,3 +62,12 @@ class TestTransferencia:
 
         with pytest.raises(ValueError):
             transferencia.executar()
+
+    def test_nao_deve_permitir_valor_nao_numerico(self):
+
+        conta_origem = ContaBancaria(1000.0, "001")
+        conta_destino = ContaBancaria(500.0, "002")
+        transferencia = Transferencia(conta_origem, conta_destino, None)
+
+        with pytest.raises(ValueError):
+            transferencia.executar()

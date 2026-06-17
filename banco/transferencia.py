@@ -22,6 +22,11 @@ class Transferencia:
 
     def _validar_valor(self):
 
+        if isinstance(self.valor_transacao, bool) or not isinstance(
+            self.valor_transacao, (int, float)
+        ):
+            raise ValueError("Valor da transferência deve ser numérico")
+
         if self.valor_transacao <= 0:
             raise ValueError(
                 "Valor da transferência deve ser positivo"
